@@ -1,27 +1,27 @@
-import './App.css';
+import "./App.css";
 import {
   ApolloClient,
   InMemoryCache,
   ApolloProvider,
   createHttpLink,
-} from '@apollo/client';
-import { setContext } from '@apollo/client/link/context';
-import { Outlet } from 'react-router-dom';
+} from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
+import { Outlet } from "react-router-dom";
 
-import Navbar from './components/Navbar';
+import Navbar from "./components/Navbar";
 
 const httpLink = createHttpLink({
-  uri: '/graphql',
+  uri: "/graphql",
 });
 
-const authLink = setContext((_, { nav }) => {
+const authLink = setContext((_, { headers }) => {
   // get the authentication token from local storage if it exists
-  const token = localStorage.getItem('id_token');
+  const token = localStorage.getItem("id_token");
   // return the headers to the context so httpLink can read them
   return {
-    nav: {
-      ...nav,
-      authorization: token ? `Bearer ${token}` : '',
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : "",
     },
   };
 });
@@ -35,8 +35,10 @@ const client = new ApolloClient({
 function App() {
   return (
     <ApolloProvider client={client}>
-      <Navbar />
-      <Outlet />
+      <div>
+        <Navbar />
+        <Outlet />
+      </div>
     </ApolloProvider>
   );
 }

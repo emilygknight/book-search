@@ -5,12 +5,12 @@ const resolvers = {
   Query: {
     // geting all users
     users: async () => {
-      return User.find();
+      return User.find().populate('savedBooks');
     },
 
     // geting a single user by id
     user: async (parent, { userId }) => {
-      return User.findOne({ _id: userId });
+      return User.findOne({ _id: userId }).populate('savedBooks');
     },
     // By adding context to our query, we can retrieve the logged in user without specifically searching for them
     me: async (parent, args, context) => {
@@ -46,7 +46,7 @@ const resolvers = {
     },
 
     // Add a third argument to the resolver to access data in our `context`
-    addBook: async (parent, { userId, skill }, context) => {
+    saveBook: async (parent, { userId, book }, context) => {
       // If context has a `user` property, that means the user executing this mutation has a valid JWT and is logged in
       if (context.user) {
         return User.findOneAndUpdate(

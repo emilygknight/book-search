@@ -1,10 +1,9 @@
-// import { useState } from 'react';
+import { useState } from 'react';
 import {Container,Card,Button,Row,Col} from 'react-bootstrap';
-
 import { useQuery, useMutation } from '@apollo/client';
 import Auth from '../utils/auth';
-import { removeBookId } from '../utils/localStorage';
-import { REMOVE_BOOK } from '../utils/mutations';
+import { GET_ME , REMOVE_BOOK } from '../utils/mutations';
+import { remove } from '../../../server/models/Book';
 
 const SavedBooks = () => {
   const { loading, data } = useQuery(GET_ME);
@@ -33,13 +32,12 @@ const SavedBooks = () => {
 
       // upon success, update userData and remove book's id from localStorage
       userData(updatedUser);
-      removeBookId(bookId);
+      removeBookMutation(bookId);
     } catch (err) {
       console.error(err);
     }
   };
 
-  // if data isn't here yet, say so
   if (loading) {
     return <h2>LOADING...</h2>;
   }

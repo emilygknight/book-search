@@ -1,4 +1,4 @@
-import { useState , useEffect } from 'react';
+import React, { useState , useEffect } from 'react';
 import {
   Container,
   Col,
@@ -12,6 +12,7 @@ import { SAVE_BOOK } from '../utils/mutations';
 import Auth from '../utils/auth';
 // import { searchGoogleBooks } from '../utils/API';
 import axios from 'axios';
+import { getSavedBookIds, saveBookIds } from '../utils/localStorage';
 
 
 const SearchBooks = () => {
@@ -25,8 +26,8 @@ const SearchBooks = () => {
   const [saveBookMutation] = useMutation(SAVE_BOOK);
 
   useEffect(() => {
-    // No need to save to localStorage
-  }, [savedBookIds]);
+    return () => saveBookIds(savedBookIds);
+  });
 
   // create method to search for books and set state on form submit
   const handleFormSubmit = async (event) => {
@@ -37,9 +38,14 @@ const SearchBooks = () => {
     }
 
     try {
-      const response = await axios.get(`https://www.googleapis.com/books/v1/volumes?q=${searchInput}`);
+      const response = await fetch(
+        `https://www.googleapis.com/books/v1/volumes?q=${searchInput}`);
 
-      const { items } = response.data;
+        if (!response.ok) {
+          throw new Error('something went wrong!');
+        }
+
+      const { items } = await response.json();
 
       const bookData = items.map((book) => ({
         bookId: book.id,
@@ -69,15 +75,19 @@ const SearchBooks = () => {
     }
 
     try {
-      const { data } = await saveBookMutation({
-        variables: { book: bookToSave },
+      const response = await saveBookMutation({
+        variables: { input: bookToSave },
       });
 
-      const saveBook = data.saveBook;
+      // const saveBook = data.saveBook;
 
-      setSavedBookIds([...savedBookIds, saveBook.bookId]);
+      // setSavedBookIds([...savedBookIds, saveBook.bookId]);
+      if(!response) {
+        throw new Error('something went wrong!');
       }
-       catch (err) {
+
+      setSavedBookIds([...savedBookIds, bookToSave.bookId]);
+    } catch (err) {
       console.error(err);
     }
   };

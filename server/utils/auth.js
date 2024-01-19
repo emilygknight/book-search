@@ -1,18 +1,18 @@
-const { GraphQLError } = require('graphql');
+// const { GraphQLError } = require('graphql');
 const jwt = require('jsonwebtoken');
-const { AuthenticationError } = require('apollo-server');
+// const { AuthenticationError } = require('apollo-server-express');
 
 // set token secret and expiration date
 const secret = 'mysecretsshhhhh';
 const expiration = '2h';
 
 module.exports = {
-  AuthenticationError: new GraphQLError('Could not authenticate user.', {
-    extensions: {
-      code: 'UNAUTHENTICATED',
-    },
-  }),
-  authMiddleware: function (context) {
+  // AuthenticationError: new GraphQLError('Could not authenticate user.', {
+  //   extensions: {
+  //     code: 'UNAUTHENTICATED',
+  //   },
+  // }),
+  authMiddleware: function ({ req }) {
     // allows token to be sent via context.req.headers.authorization
     let token = req.body.token || req.query.token || req.headers.authorization;
 
@@ -21,17 +21,17 @@ module.exports = {
     }
 
     if (!token) {
-      throw new AuthenticationError('You have no token!');
+      return req;
     }
 
     // verify token and get user data out of it
     try {
       const { data } = jwt.verify(token, secret, { maxAge: expiration });
-      context.user = data;
+      req.user = data;
     } catch (error) {
-      console.log('Invalid token', error);
-      throw new AuthenticationError('Invalid token!');
+      console.log('Invalid token');
     }
+    return req;
   },
   signToken: function ({ username, email, _id }) {
     const payload = { username, email, _id };

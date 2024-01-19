@@ -1,18 +1,17 @@
-import { useState } from 'react';
+import React from 'react';
 import {Container,Card,Button,Row,Col} from 'react-bootstrap';
 import { useQuery, useMutation } from '@apollo/client';
 import Auth from '../utils/auth';
 import { REMOVE_BOOK } from '../utils/mutations';
 import { GET_ME } from '../utils/queries';
-import { remove } from '../../../server/models/Book';
+import { removeBookId } from '../utils/localStorage';
 
 const SavedBooks = () => {
   const { loading, data } = useQuery(GET_ME);
+  let userData = data?.me || {};
+  console.log(userData);
+
   const [removeBookMutation] = useMutation(REMOVE_BOOK);
-
-  const userData = data ? data.me : {};
-  // const [userData, setUserData] = useState({});
-
 
 
   const handleDeleteBook = async (bookId) => {
@@ -24,16 +23,20 @@ const SavedBooks = () => {
 
     try {
       // Use the removeBookMutation to execute the REMOVE_BOOK mutation
-      const { data } = await removeBookMutation({
-        variables: { bookId },
+      const { user } = await removeBookMutation({
+        variables: { 
+          bookId: bookId,
+        },
       });
 
       // Access the updated user data
-      const updatedUser = data.removeBook;
+      // const updatedUser = data.removeBook;
 
+      userData = user;
+      // removeBookId(bookId);
       // upon success, update userData and remove book's id from localStorage
-      userData(updatedUser);
-      removeBookMutation(bookId);
+      // userData(updatedUser);
+      removeBookId(bookId);
     } catch (err) {
       console.error(err);
     }

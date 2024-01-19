@@ -11,6 +11,7 @@ const db = require('./config/connection');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+
 const server = new ApolloServer({
   typeDefs,
   resolvers,
@@ -23,6 +24,17 @@ const startApolloServer = async () => {
   app.use(express.urlencoded({ extended: false }));
   app.use(express.json());
 
+  app.get('/api/books/search', async (req, res) => {
+    try {
+      const { query } = req.query;
+      const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${query}`);
+      const data = await response.json();
+      res.json(data);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Server error' });
+    }
+  });
 
   app.use('/graphql', expressMiddleware(server, {
     context: authMiddleware

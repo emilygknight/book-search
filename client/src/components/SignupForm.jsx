@@ -10,9 +10,9 @@ const SignupForm = () => {
   // set initial form state
   const [userFormData, setUserFormData] = useState({ username: '', email: '', password: '' });
   // set state for form validation
-  const [validated] = useState(false);
+  const [validated] = useState('');
   // set state for alert
-  const [showAlert, setShowAlert] = useState(false);
+  const [showAlert, setShowAlert] = useState('');
 
   const [addUserMutation] = useMutation(ADD_USER);
 

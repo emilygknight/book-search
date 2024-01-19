@@ -2,7 +2,8 @@ import { useState } from 'react';
 import {Container,Card,Button,Row,Col} from 'react-bootstrap';
 import { useQuery, useMutation } from '@apollo/client';
 import Auth from '../utils/auth';
-import { GET_ME , REMOVE_BOOK } from '../utils/mutations';
+import { REMOVE_BOOK } from '../utils/mutations';
+import { GET_ME } from '../utils/queries';
 import { remove } from '../../../server/models/Book';
 
 const SavedBooks = () => {

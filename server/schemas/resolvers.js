@@ -1,6 +1,5 @@
 const { User , Book } = require('../models');
-const { signToken } = require('../utils/auth');
-const { AuthenticationError } = require('apollo-server-express');
+const { signToken , AuthenticationError } = require('../utils/auth');
 
 const resolvers = {
   Query: {
@@ -18,7 +17,6 @@ const resolvers = {
       if (context.user) {
         const userData = await User.findOne({ _id: context.user._id })
         .select("-__v -password")
-        .populate("savedBooks");
 
         return userData;
       }
@@ -37,13 +35,13 @@ const resolvers = {
       const user = await User.findOne({ email });
 
       if (!user) {
-        throw AuthenticationError("Incorrect credentials");
+        throw AuthenticationError;
       }
 
       const correctPw = await user.isCorrectPassword(password);
 
       if (!correctPw) {
-        throw AuthenticationError("Incorrect credentials");
+        throw AuthenticationError;
       }
 
       const token = signToken(user);
@@ -51,23 +49,23 @@ const resolvers = {
     },
 
     // Add a third argument to the resolver to access data in our `context`
-    saveBook: async (parent, { input }, context) => {
+    saveBook: async (parent, { bookToSave }, context) => {
       // If context has a `user` property, that means the user executing this mutation has a valid JWT and is logged in
       if (context.user) {
         const updatedUser = await User.findOneAndUpdate(
           { _id: context.user._id },
           {
-            $addToSet: { savedBooks: input },
+            // saving to the savedBooks array
+            $addToSet: { savedBooks: bookToSave },
           },
           {
             new: true,
-          }
-        ).populate("savedBooks");
+          });
         
         return updatedUser;
       }
       // If user attempts to execute this mutation and isn't logged in, throw an error
-      throw new AuthenticationError("You need to be logged in!");
+      throw new AuthenticationError;
     },
     // Make it so a logged in user can only remove a skill from their own profile
     removeBook: async (parent, { bookId }, context) => {
@@ -79,6 +77,7 @@ const resolvers = {
         );
         return updatedUser;
       }
+      throw new AuthenticationError;
     },
   },
 };

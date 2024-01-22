@@ -10,19 +10,12 @@ const SignupForm = () => {
   // set initial form state
   const [userFormData, setUserFormData] = useState({ username: '', email: '', password: '' });
   // set state for form validation
-  const [validated] = useState('');
+  // const [validated] = useState(true);
   // set state for alert
   const [showAlert, setShowAlert] = useState('');
 
   const [addUserMutation] = useMutation(ADD_USER);
 
-  useEffect(() => {
-    if (error) {
-      setShowAlert(true);
-    } else {
-      setShowAlert(false);
-    }
-  }, [error]);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -44,30 +37,29 @@ const SignupForm = () => {
         variables: {...userFormData},
       });
 
-      Auth.login(data.addUser.token);
-    } catch (err) {
-      console.error(err);
-    }
-
     //   const { token, user } = await response.json();
     //   console.log(user);
-    //   Auth.login(token);
+      Auth.login(token);
     // } catch (err) {
     //   console.error(err);
     //   setShowAlert(true);
     // }
 
-    // setUserFormData({
-    //   username: '',
-    //   email: '',
-    //   password: '',
-    // });
+    setUserFormData({
+      username: '',
+      email: '',
+      password: '',
+    });
+    } catch (err) {
+    console.error(err);
+  }
+
   };
 
   return (
     <>
       {/* This is needed for the validation functionality above */}
-      <Form noValidate validated={validated} onSubmit={handleFormSubmit}>
+      <Form noValidate validated={true} onSubmit={handleFormSubmit}>
         {/* show alert if server response is bad */}
         <Alert dismissible onClose={() => setShowAlert(false)} show={showAlert} variant='danger'>
           Something went wrong with your signup!

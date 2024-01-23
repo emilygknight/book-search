@@ -10,11 +10,13 @@ const SignupForm = () => {
   // set initial form state
   const [userFormData, setUserFormData] = useState({ username: '', email: '', password: '' });
   // set state for form validation
-  // const [validated] = useState(true);
+  const [validated] = useState(true);
   // set state for alert
   const [showAlert, setShowAlert] = useState('');
 
   const [addUserMutation] = useMutation(ADD_USER);
+
+  // const [loginMutation] = useMutation(LOGIN_USER);
 
 
   const handleInputChange = (event) => {
@@ -32,14 +34,16 @@ const SignupForm = () => {
     //   event.stopPropagation();
     // }
 
+
+
     try {
       const { data } = await addUserMutation({
         variables: {...userFormData},
       });
-
+      Auth.login(data.addUser.token);
     //   const { token, user } = await response.json();
     //   console.log(user);
-      Auth.login(token);
+  
     // } catch (err) {
     //   console.error(err);
     //   setShowAlert(true);
@@ -59,7 +63,7 @@ const SignupForm = () => {
   return (
     <>
       {/* This is needed for the validation functionality above */}
-      <Form noValidate validated={true} onSubmit={handleFormSubmit}>
+      <Form noValidate validated={validated} onSubmit={handleFormSubmit}>
         {/* show alert if server response is bad */}
         <Alert dismissible onClose={() => setShowAlert(false)} show={showAlert} variant='danger'>
           Something went wrong with your signup!

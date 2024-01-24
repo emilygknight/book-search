@@ -8,9 +8,9 @@
     "develop": "concurrently \"cd server && npm run start\" \"cd client && npm run dev\"",
     "install": "cd server && npm i && cd ../client && npm i && npm run build",
     "seed": "cd server && npm run seed",
-    "build": "npm i &&  cd client && npm run build && cd ..",
+    "build": "npm i &&  cd client && npm run build",
     "predeploy": "npm run build",
-    "deploy": "render"
+    "deploy": "npm render"
   },
   "keywords": [],
   "author": "",

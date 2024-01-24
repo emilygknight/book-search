@@ -10,13 +10,14 @@
     "seed": "cd server && npm run seed",
     "build": "npm i &&  cd client && npm run build",
     "predeploy": "npm run build",
-    "deploy": "npm render"
+    "deploy": "npm run render"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "concurrently": "^5.3.0"
+    "concurrently": "^5.3.0",
+    "render": "'^0.1.4"
   },
   "dependencies": {
     "render": "^0.1.4"

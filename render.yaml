@@ -1,4 +1,0 @@
-name: book-search
-env: node
-buildCommand: npm run build
-startCommand: npm run start
